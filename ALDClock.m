@@ -95,7 +95,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
 	_hourHandThickness = 5.0f;
 	
 	_majorMarkingLength = 5.0f;
-	_minorMarkingLength = 1.0f;
+	_minorMarkingLength = 3.0f;
 	
 	_markingsInset = 5.0f;
 	
@@ -114,9 +114,9 @@ const CGFloat kALDClockAnimationIncrement = 30;
 							NSParagraphStyleAttributeName: paragraphStyle,
 							NSFontAttributeName : [UIFont systemFontOfSize:13.0f]};
 	
-	_digitAttributes = @{NSForegroundColorAttributeName : [UIColor colorWithWhite:0.0 alpha:1.0],
-						 NSParagraphStyleAttributeName: paragraphStyle,
-						 NSFontAttributeName : [UIFont systemFontOfSize:16.0f]};
+    _digitAttributes = @{NSForegroundColorAttributeName : [UIColor colorWithRed:1 green:0.58 blue:0 alpha:1],
+                         NSParagraphStyleAttributeName: paragraphStyle,
+                         NSFontAttributeName : [UIFont boldSystemFontOfSize:22.0f]};
 }
 
 - (void)updateRadius
@@ -452,14 +452,21 @@ const CGFloat kALDClockAnimationIncrement = 30;
         
         CGFloat markingX1 = center.x + markingDistanceFromCenter * cos((M_PI/180)* i * 30 + M_PI);
         CGFloat markingY1 = center.y + - 1 * markingDistanceFromCenter * sin((M_PI/180)* i * 30);
-        CGFloat markingX2 = center.x + (markingDistanceFromCenter - self.majorMarkingLength) * cos((M_PI/180)* i * 30 + M_PI);
-        CGFloat markingY2 = center.y + - 1 * (markingDistanceFromCenter - self.majorMarkingLength) * sin((M_PI/180)* i * 30);
+        //        CGFloat markingX2 = center.x + (markingDistanceFromCenter - self.majorMarkingsLength) * cos((M_PI/180)* i * 30 + M_PI);
+        //        CGFloat markingY2 = center.y + - 1 * (markingDistanceFromCenter - self.majorMarkingsLength) * sin((M_PI/180)* i * 30);
         
         // Move the cursor to the edge of the marking
-        CGContextMoveToPoint(context, markingX1, markingY1);
+        //        CGContextMoveToPoint(context, markingX1, markingY1);
         
         // Move to the end of the hand
-        CGContextAddLineToPoint(context, markingX2, markingY2);
+        //        CGContextAddLineToPoint(context, markingX2, markingY2);
+        
+        CGContextSetFillColorWithColor(context, self.majorMarkingColor.CGColor);
+        CGContextFillEllipseInRect(context, CGRectMake(markingX1-5,
+                                                       markingY1-5,
+                                                       self.majorMarkingLength*2,
+                                                       self.majorMarkingLength*2)
+                                   );
     }
     
     // Draw minor markings.
@@ -482,15 +489,21 @@ const CGFloat kALDClockAnimationIncrement = 30;
         
         CGFloat markingX1 = center.x + markingDistanceFromCenter * cos((M_PI/180)* i * 6 + M_PI);
         CGFloat markingY1 = center.y + - 1 * markingDistanceFromCenter * sin((M_PI/180)* i * 6);
-        
-        CGFloat markingX2 = center.x + (markingDistanceFromCenter - self.minorMarkingLength) * cos( (M_PI/180)* i * 6+ M_PI);
-        CGFloat markingY2 = center.y + - 1 * (markingDistanceFromCenter - self.minorMarkingLength) * sin((M_PI/180)* i * 6);
+        //        CGFloat markingX2 = center.x + (markingDistanceFromCenter - self.minorMarkingsLength) * cos( (M_PI/180)* i * 6+ M_PI);
+        //        CGFloat markingY2 = center.y + - 1 * (markingDistanceFromCenter - self.minorMarkingsLength) * sin((M_PI/180)* i * 6);
         
         // Move the cursor to the edge of the marking
-        CGContextMoveToPoint(context, markingX1, markingY1);
+        //        CGContextMoveToPoint(context, markingX1, markingY1);
         
         // Move to the end of the hand
-        CGContextAddLineToPoint(context, markingX2, markingY2);
+        //        CGContextAddLineToPoint(context, markingX2, markingY2);
+        
+        CGContextSetFillColorWithColor(context, self.minorMarkingColor.CGColor);
+        CGContextFillEllipseInRect(context, CGRectMake(markingX1-3,
+                                                       markingY1-3,
+                                                       self.minorMarkingLength*2,
+                                                       self.minorMarkingLength*2)
+                                   );
     }
     
     // Draw minor markings.
@@ -499,25 +512,29 @@ const CGFloat kALDClockAnimationIncrement = 30;
     // Draw the digits
     for(unsigned i = 0; i < 12; i ++)
     {
-        UIFont *digitFont = self.digitAttributes[NSFontAttributeName];
-        
-        CGFloat markingDistanceFromCenter = rectForClockFace.size.width/2.0f - digitFont.lineHeight/4.0f - self.markingsInset - MAX(self.majorMarkingLength, self.minorMarkingLength);
-        NSInteger offset = 4;
-        
-        CGFloat labelX = center.x + (markingDistanceFromCenter - digitFont.lineHeight/2.0f) * cos( (M_PI/180)* (i+offset) * 30 + M_PI);
-        CGFloat labelY = center.y + - 1 * (markingDistanceFromCenter - digitFont.lineHeight/2.0f) * sin((M_PI/180)*(i+offset) * 30);
-        
-        NSString *hourNumber = [NSString stringWithFormat:@"%d", i + 1];
-        [hourNumber drawInRect:CGRectMake(labelX - digitFont.lineHeight/2.0f,
-                                          labelY - digitFont.lineHeight/2.0f,
-                                          digitFont.lineHeight,
-                                          digitFont.lineHeight)
-                withAttributes:self.digitAttributes];
+        if ((i+1) % 3 == 0 ) {
+            UIFont *digitFont = self.digitAttributes[NSFontAttributeName];
+            
+            CGFloat markingDistanceFromCenter = rectForClockFace.size.width/2.0f - digitFont.lineHeight/4.0f - self.markingsInset;// - MAX(self.majorMarkingsLength, self.minorMarkingsLength);
+            NSInteger offset = 4;
+            
+            CGFloat labelX = center.x + (markingDistanceFromCenter - digitFont.lineHeight/2.0f) * cos( (M_PI/180)* (i+offset) * 30 + M_PI);
+            CGFloat labelY = center.y + - 1 * (markingDistanceFromCenter - digitFont.lineHeight/2.0f) * sin((M_PI/180)*(i+offset) * 30);
+            
+            NSString *hourNumber = [NSString stringWithFormat:@"%d", i + 1];
+            [hourNumber drawInRect:CGRectMake(labelX - digitFont.lineHeight/2.0f,
+                                              labelY - digitFont.lineHeight/2.0f,
+                                              digitFont.lineHeight,
+                                              digitFont.lineHeight)
+                    withAttributes:self.digitAttributes];
+        }
     }
     
     // --------------------------
     // --  Draw the hour hand  --
     // --------------------------
+    
+    CGContextSetLineCap(context , kCGLineCapRound);
     
     // Set the hand width
     CGContextSetLineWidth(context, self.hourHandThickness);
@@ -533,8 +550,8 @@ const CGFloat kALDClockAnimationIncrement = 30;
     CGContextMoveToPoint(context, center.x, center.y);
     
     // Get the location of the end of the hand
-    CGFloat hourHandX = center.x + (0.6*self.radius) * cos((M_PI/180)*hourHandAngle);
-    CGFloat hourHandY = center.y + - 1 * (0.6*self.radius) * sin((M_PI/180)*hourHandAngle);
+    CGFloat hourHandX = center.x + (0.50*self.radius) * cos((M_PI/180)*hourHandAngle);
+    CGFloat hourHandY = center.y + - 1 * (0.50*self.radius) * sin((M_PI/180)*hourHandAngle);
     
     // Move to the end of the hand
     CGContextAddLineToPoint(context, hourHandX, hourHandY);
@@ -563,8 +580,8 @@ const CGFloat kALDClockAnimationIncrement = 30;
     CGContextMoveToPoint(context, center.x, center.y );
     
     // Get the location of the end of the hand
-    CGFloat minuteHandX = center.x + 0.90*self.radius * cos((M_PI/180)*minuteHandAngle);
-    CGFloat minuteHandY = center.y + - 1 * 0.90*self.radius * sin((M_PI/180)*minuteHandAngle);
+    CGFloat minuteHandX = center.x + 0.75*self.radius * cos((M_PI/180)*minuteHandAngle);
+    CGFloat minuteHandY = center.y + - 1 * 0.75*self.radius * sin((M_PI/180)*minuteHandAngle);
     
     // Move to the end of the hand
     CGContextAddLineToPoint(context, minuteHandX, minuteHandY);
@@ -577,10 +594,17 @@ const CGFloat kALDClockAnimationIncrement = 30;
     // --------------------------
     
     CGContextSetFillColorWithColor(context, self.minuteHandColor.CGColor);
-    CGContextFillEllipseInRect(context, CGRectMake(CGRectGetMidX(rectForClockFace)-8,
-                                                   CGRectGetMidY(rectForClockFace)-8,
-                                                   16,
-                                                   16)
+    CGContextFillEllipseInRect(context, CGRectMake(CGRectGetMidX(rectForClockFace)-13,
+                                                   CGRectGetMidY(rectForClockFace)-13,
+                                                   26,
+                                                   26)
+                               );
+    
+    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:1 green:0.92 blue:0.8 alpha:1].CGColor);
+    CGContextFillEllipseInRect(context, CGRectMake(CGRectGetMidX(rectForClockFace)-7,
+                                                   CGRectGetMidY(rectForClockFace)-7,
+                                                   14,
+                                                   14)
                                );
     
     // --------------------------
