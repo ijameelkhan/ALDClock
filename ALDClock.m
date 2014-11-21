@@ -87,6 +87,7 @@ const CGFloat kALDClockAnimationIncrement = 30;
 	_minorMarkingColor = [UIColor colorWithWhite:0.4 alpha:1.0];
 	_minuteHandColor = [UIColor colorWithWhite:0.2 alpha:1.0];
 	_hourHandColor = [UIColor colorWithWhite:0.2 alpha:1.0];
+    _centerCapColor = [UIColor colorWithWhite:0.2 alpha:1.0];
 	
 	// Set default thicknesses
 	_majorMarkingThickness = 1.0f;
@@ -594,17 +595,17 @@ const CGFloat kALDClockAnimationIncrement = 30;
     // --------------------------
     
     CGContextSetFillColorWithColor(context, self.minuteHandColor.CGColor);
-    CGContextFillEllipseInRect(context, CGRectMake(CGRectGetMidX(rectForClockFace)-13,
+    CGContextStrokeEllipseInRect(context, CGRectMake(CGRectGetMidX(rectForClockFace)-13,
                                                    CGRectGetMidY(rectForClockFace)-13,
                                                    26,
                                                    26)
                                );
     
-    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:1 green:0.92 blue:0.8 alpha:1].CGColor);
-    CGContextFillEllipseInRect(context, CGRectMake(CGRectGetMidX(rectForClockFace)-7,
-                                                   CGRectGetMidY(rectForClockFace)-7,
-                                                   14,
-                                                   14)
+    CGContextSetFillColorWithColor(context, self.centerCapColor.CGColor);
+    CGContextFillEllipseInRect(context, CGRectMake(CGRectGetMidX(rectForClockFace)-10,
+                                                   CGRectGetMidY(rectForClockFace)-10,
+                                                   20,
+                                                   20)
                                );
     
     // --------------------------

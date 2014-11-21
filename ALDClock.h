@@ -150,6 +150,11 @@
 @property (nonatomic, strong) UIColor *borderColor;
 
 /**
+ Color of the center cap of the clock
+ */
+@property (nonatomic, strong) UIColor *centerCapColor;
+
+/**
  Thickness of the border of the clock
  */
 @property (nonatomic, assign) CGFloat borderWidth;
